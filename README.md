@@ -1,6 +1,6 @@
 # **Vedofair API server**
 Miro dashboard - https://miro.com/app/board/o9J_lFtmXUI=/
-Переделана структура DB и чутка нормализирована.
+
 
 #### Коротко о главном.
 Это чат приложение на стеке
