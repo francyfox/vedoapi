@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
  * @ApiResource
@@ -21,12 +21,12 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @OA\Property(description="The unique identifier of the user.")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @SWG\Property(type="string", maxLength=255)
      *
      */
     private $username;
@@ -70,17 +70,6 @@ class User implements UserInterface
 
     private $birthday;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-
-    private $like;
-
-    /**
-     * @ORM\Column(type="json")
-     */
-
-    private $dislike;
 
     /**
      * @ORM\Column(type="string", length=180, unique=false)
@@ -113,10 +102,51 @@ class User implements UserInterface
     private $country;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=true)
+     * @ORM\Column(type="json")
      */
 
-    private $ip;
+    private $likeArr = [];
+
+    /**
+     * @ORM\Column(type="json")
+     */
+
+    private $dislikeArr = [];
+
+    /**
+     * @param json $dislikeArr
+     */
+    public function setDisLikeArr(array $dislikeArr): array
+    {
+        return $this->likeArr = $dislikeArr;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDisLikeArr(): array
+    {
+        $dislikeArr = $this->dislikeArr;
+        return array_unique($dislikeArr);
+    }
+
+    /**
+     * @param json $likeArr
+     */
+    public function setLikeArr(array $likeArr): array
+    {
+        return $this->likeArr = $likeArr;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLikeArr(): array
+    {
+        $likeArr = $this->likeArr;
+        return array_unique($likeArr);
+    }
+
 
 
     /**
@@ -143,13 +173,7 @@ class User implements UserInterface
         return $this->country;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDislike()
-    {
-        return $this->dislike;
-    }
+
 
     /**
      * @return mixed
@@ -170,26 +194,11 @@ class User implements UserInterface
     /**
      * @return mixed
      */
-    public function getIp()
-    {
-        return $this->ip;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getLastname()
     {
         return $this->lastname;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLike()
-    {
-        return $this->line;
-    }
 
     /**
      * @return mixed
@@ -248,21 +257,6 @@ class User implements UserInterface
         $this->birthday = $birthday;
     }
 
-    /**
-     * @param mixed $like
-     */
-    public function setLike($like): void
-    {
-        $this->like = $like;
-    }
-
-    /**
-     * @param mixed $dislike
-     */
-    public function setDislike($dislike): void
-    {
-        $this->dislike = $dislike;
-    }
 
     /**
      * @param string $work
@@ -302,14 +296,6 @@ class User implements UserInterface
     public function setCountry($country): void
     {
         $this->country = $country;
-    }
-
-    /**
-     * @param string $ip
-     */
-    public function setIp(string $ip): void
-    {
-        $this->ip = $ip;
     }
 
 

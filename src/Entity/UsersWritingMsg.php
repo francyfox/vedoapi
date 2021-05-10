@@ -6,7 +6,8 @@ use App\Repository\UsersWritingMsgRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=UsersWritingMsgRepository::class)
+ * delete
+ * ORM\Entity(repositoryClass=UsersWritingMsgRepository::class)
  */
 class UsersWritingMsg
 {
