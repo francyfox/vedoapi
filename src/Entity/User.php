@@ -8,9 +8,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * @ApiResource
+ * @ApiResource(
+ *
+ *  collectionOperations={
+ *     "post",
+ *      "collName_api_check"={"route_name"="authentication_token"}
+ *  },
+ *     paginationEnabled=false
+ *  )
+ * @ApiFilter(SearchFilter::class, properties={"username": "exact"})
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
@@ -113,22 +123,13 @@ class User implements UserInterface
 
     private $dislikeArr = [];
 
-    /**
-     * @param json $dislikeArr
-     */
-    public function setDisLikeArr(array $dislikeArr): array
-    {
-        return $this->likeArr = $dislikeArr;
-    }
+    #TODO: post user dislike empty? Why?
 
     /**
-     * @return array
+     * @ORM\OneToOne(targetEntity=Disc::class, cascade={"persist", "remove"})
      */
-    public function getDisLikeArr(): array
-    {
-        $dislikeArr = $this->dislikeArr;
-        return array_unique($dislikeArr);
-    }
+    private $disc;
+
 
     /**
      * @param json $likeArr
@@ -138,13 +139,34 @@ class User implements UserInterface
         return $this->likeArr = $likeArr;
     }
 
+
     /**
      * @return array
      */
-    public function getLikeArr(): array
+    public function getLikeArr(): ?array
     {
         $likeArr = $this->likeArr;
         return array_unique($likeArr);
+    }
+
+
+    /**
+     * @param json $dislikeArr
+     */
+
+    public function setDislikeArr(array $dislikeArr): array
+    {
+        return $this->likeArr = $dislikeArr;
+    }
+
+    /**
+     * @return array
+     */
+
+    public function getDislikeArr(): ?array
+    {
+        $dislikeArr = $this->dislikeArr;
+        return array_unique($dislikeArr);
     }
 
 
@@ -156,6 +178,8 @@ class User implements UserInterface
     {
         return $this->birthday;
     }
+
+
 
     /**
      * @return mixed
@@ -373,5 +397,17 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getDisc(): ?Disc
+    {
+        return $this->disc;
+    }
+
+    public function setDisc(?Disc $disc): self
+    {
+        $this->disc = $disc;
+
+        return $this;
     }
 }

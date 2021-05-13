@@ -1,7 +1,9 @@
 security:
     encoders:
         App\Entity\User:
-            algorithm: auto
+            algorithm: bcrypt
+            cost: 10
+            iterations: 1
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -19,6 +21,10 @@ security:
             stateless: true
             anonymous: true
             provider: app_user_provider
+#            auth:
+#                check_path:   ^/api/users/auth
+#                username_path: security.credentials.login
+#                password_path: security.credentials.password
 
         login:
             pattern:  ^/api/login
