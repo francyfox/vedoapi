@@ -7,8 +7,7 @@ use App\Repository\ChatRoomRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * delete
- * ORM\Entity(repositoryClass=ChatRoomRepository::class)
+ * @ORM\Entity(repositoryClass=ChatRoomRepository::class)
  */
 #[ApiResource]
 class ChatRoom
