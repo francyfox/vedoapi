@@ -12,11 +12,38 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
+ * @ApiResource(itemOperations={
+
+ * })
+ */
+
+/**
  * @ApiResource(
  *
  *  collectionOperations={
  *     "post",
- *      "collName_api_check"={"route_name"="authentication_token"}
+ *      "collName_api_check"={
+ *          "route_name"="authentication_token",
+ *         "openapi_context"={
+ *             "summary"="Check JWT token"
+ *          },
+ *      },
+ *     "join_to_user"={
+ *         "method"="PATCH",
+ *         "path"="/joinTo/user",
+ *         "controller"=UserJoin::class,
+ *         "openapi_context"={
+ *             "summary"="Add friend list // data(string username, array list)"
+ *          },
+ *     },
+ *     "join_to_group"={
+ *         "method"="PATCH",
+ *         "path"="/joinTo/group",
+ *         "controller"=UserJoin::class,
+ *         "openapi_context"={
+ *             "summary"="Add groups list // data(string username, array list)"
+ *          },
+ *     },
  *  },
  *     paginationEnabled=false
  *  )
@@ -129,6 +156,21 @@ class User implements UserInterface
      * @ORM\OneToOne(targetEntity=Disc::class, cascade={"persist", "remove"})
      */
     private $disc;
+
+    /**
+     * @ORM\Column(type="string", length=1000, nullable=true)
+     */
+    private $profileUrl;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $FriendList = [];
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $GroupList = [];
 
 
     /**
@@ -407,6 +449,42 @@ class User implements UserInterface
     public function setDisc(?Disc $disc): self
     {
         $this->disc = $disc;
+
+        return $this;
+    }
+
+    public function getProfileUrl(): ?string
+    {
+        return $this->profileUrl;
+    }
+
+    public function setProfileUrl(?string $profileUrl): self
+    {
+        $this->profileUrl = $profileUrl;
+
+        return $this;
+    }
+
+    public function getFriendList(): ?array
+    {
+        return $this->FriendList;
+    }
+
+    public function setFriendList(?array $FriendList): self
+    {
+        $this->FriendList = $FriendList;
+
+        return $this;
+    }
+
+    public function getGroupList(): ?array
+    {
+        return $this->GroupList;
+    }
+
+    public function setGroupList(?array $GroupList): self
+    {
+        $this->GroupList = $GroupList;
 
         return $this;
     }
