@@ -10,17 +10,15 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(itemOperations={
-
- * })
- */
 
 /**
  * @ApiResource(
- *
+ *  normalizationContext={"groups"={"read"}},
+ *  denormalizationContext={"groups"={"write"}},
  *  collectionOperations={
+ *     "get",
  *     "post",
  *      "collName_api_check"={
  *          "route_name"="authentication_token",
@@ -47,7 +45,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *  },
  *     paginationEnabled=false
  *  )
- * @ApiFilter(SearchFilter::class, properties={"username": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"username": "partial"})
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
@@ -55,6 +53,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 class User implements UserInterface
 {
     /**
+     * @Groups({"read", "write"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -63,17 +62,19 @@ class User implements UserInterface
     private $id;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=true)
-     *
      */
     private $username;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="json")
      */
     private $roles = [];
 
     /**
+     * @Groups({"write"})
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
@@ -81,6 +82,7 @@ class User implements UserInterface
 
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=100, unique=true)
      */
 
@@ -88,6 +90,7 @@ class User implements UserInterface
 
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=false)
      */
 
@@ -95,6 +98,7 @@ class User implements UserInterface
 
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=false)
      */
 
@@ -102,6 +106,7 @@ class User implements UserInterface
 
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=false)
      */
 
@@ -109,42 +114,49 @@ class User implements UserInterface
 
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=false)
      */
 
     private $work;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=false)
      */
 
     private $hobby;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", options={"default":"0"})
      */
 
     private $married;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", options={"default":"0"})
      */
 
     private $childs;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=false)
      */
 
     private $country;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="json")
      */
 
     private $likeArr = [];
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="json")
      */
 
@@ -153,27 +165,32 @@ class User implements UserInterface
     #TODO: post user dislike empty? Why?
 
     /**
+     * @Groups({"write"})
      * @ORM\OneToOne(targetEntity=Disc::class, cascade={"persist", "remove"})
      */
     private $disc;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $profileUrl;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="array")
      */
     private $FriendList = [];
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="array")
      */
     private $GroupList = [];
 
 
     /**
+     * @Groups({"read", "write"})
      * @param json $likeArr
      */
     public function setLikeArr(array $likeArr): array

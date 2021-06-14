@@ -5,9 +5,12 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GroupRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ApiResource
+ * @ApiFilter(SearchFilter::class, properties={"groupName": "partial"})
  * @ORM\Entity(repositoryClass=GroupRepository::class)
  * @ORM\Table(name="`group`")
  */
@@ -45,6 +48,11 @@ class Group
      * @ORM\Column(type="boolean")
      */
     private $rp;
+
+    /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $imageUrl;
 
     public function getId(): ?int
     {
@@ -107,6 +115,18 @@ class Group
     public function setRp(bool $rp): self
     {
         $this->rp = $rp;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }
