@@ -74,7 +74,7 @@ class User implements UserInterface
     private $roles = [];
 
     /**
-     * @Groups({"write"})
+     * @Groups({"read", "write"})
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
@@ -177,16 +177,39 @@ class User implements UserInterface
     private $profileUrl;
 
     /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="array")
+     * @Groups({"read"})
+     * Many Users have Many Users.
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="myFriends")
      */
-    private $FriendList = [];
+    private $friendsWithMe;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array")
+     * Many Users have many Users.
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="friendsWithMe")
+     * @ORM\JoinTable(name="friends",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="friend_user_id", referencedColumnName="id")}
+     *      )
      */
-    private $GroupList = [];
+    private $myFriends;
+
+    public function __construct() {
+        $this->friendsWithMe = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->myFriends = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    public function getMyFriends(){
+        return $this->myFriends;
+    }
+
+    public function addFriend(User $friend){
+        $this->myFriends->add($friend);
+    }
+
+    public function removeFriend(User $friend){
+        $this->myFriends->removeElement($friend);
+    }
 
 
     /**
@@ -478,30 +501,6 @@ class User implements UserInterface
     public function setProfileUrl(?string $profileUrl): self
     {
         $this->profileUrl = $profileUrl;
-
-        return $this;
-    }
-
-    public function getFriendList(): ?array
-    {
-        return $this->FriendList;
-    }
-
-    public function setFriendList(?array $FriendList): self
-    {
-        $this->FriendList = $FriendList;
-
-        return $this;
-    }
-
-    public function getGroupList(): ?array
-    {
-        return $this->GroupList;
-    }
-
-    public function setGroupList(?array $GroupList): self
-    {
-        $this->GroupList = $GroupList;
 
         return $this;
     }

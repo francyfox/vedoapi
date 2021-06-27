@@ -39,7 +39,12 @@ class Security extends AbstractController
                 $plainpwd      // the submitted password
             );
 
-            $token = $jwt->encode([$username => $user->getUsername()]);
+            $token = $jwt->encode([
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'friends' => $user->getMyFriends(),
+                'exp' => time() + 3600 // 1 hour expiration
+            ]);
             $json_token = json_encode($token);
 
             if ($validPassword)

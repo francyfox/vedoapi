@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Group;
 use App\Sockets\Chat;
 
+# https://reactphp.org/
 class SocketCommand extends Command
 {
     private $em;
@@ -45,7 +46,7 @@ class SocketCommand extends Command
             '-(((---(((--------',
             'Ratchet Vedofair Started',// A line
             '============',// Another line
-            'Socket chat online, open your browser.',// Empty line
+            'Current Routers: ',// Empty line
         ]);
 
         $app = new \Ratchet\App('localhost', 8080, '127.0.0.1');
