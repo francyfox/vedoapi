@@ -6,17 +6,24 @@ namespace App\Controller;
 use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+
 
 class Security extends AbstractController
 {
     /**
      * @Route("/api/auth", name="auth", methods={"POST"})
      */
-    public function auth(Request $request, UserPasswordEncoderInterface $passwordEncoder, JWTEncoderInterface $jwt): Response
+
+    public function auth(SerializerInterface $serializer,
+                         Request $request,
+                         UserPasswordEncoderInterface $passwordEncoder,
+                         JWTEncoderInterface $jwt): Response
     {
         $data = json_decode($request->getContent(), true);
         $username = $data['username'];
@@ -39,13 +46,19 @@ class Security extends AbstractController
                 $plainpwd      // the submitted password
             );
 
+            $serialFriends = $serializer->serialize($user->getMyFriends(), 'json');
+            $serialGroups = $serializer->serialize($user->getMyGroups(), 'json');
+
             $token = $jwt->encode([
                 'id' => $user->getId(),
+                'profileUrl' => $user->getProfileUrl(),
                 'username' => $user->getUsername(),
-                'friends' => $user->getMyFriends(),
+                'name' => $user->getName(),
+                'lastname' => $user->getLastName(),
+                'friends' => $serialFriends,
+                'users_groups' => $serialGroups,
                 'exp' => time() + 3600 // 1 hour expiration
             ]);
-            $json_token = json_encode($token);
 
             if ($validPassword)
             {

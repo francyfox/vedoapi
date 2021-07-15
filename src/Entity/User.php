@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -27,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          },
  *      },
  *     "join_to_user"={
- *         "method"="PATCH",
+ *         "method"="POST",
  *         "path"="/joinTo/user",
  *         "controller"=UserJoin::class,
  *         "openapi_context"={
@@ -35,7 +36,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          },
  *     },
  *     "join_to_group"={
- *         "method"="PATCH",
+ *         "method"="POST",
  *         "path"="/joinTo/group",
  *         "controller"=UserJoin::class,
  *         "openapi_context"={
@@ -177,7 +178,7 @@ class User implements UserInterface
     private $profileUrl;
 
     /**
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      * Many Users have Many Users.
      * @ORM\ManyToMany(targetEntity="User", mappedBy="myFriends")
      */
@@ -186,7 +187,7 @@ class User implements UserInterface
     /**
      * @Groups({"read", "write"})
      * Many Users have many Users.
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="friendsWithMe")
+     * @ORM\ManyToMany(targetEntity="User", cascade={"persist", "remove"}, inversedBy="friendsWithMe")
      * @ORM\JoinTable(name="friends",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="friend_user_id", referencedColumnName="id")}
@@ -194,21 +195,53 @@ class User implements UserInterface
      */
     private $myFriends;
 
+    /**
+     * @Groups({"read", "write"})
+     * Many Users have Many Groups.
+     * @ORM\ManyToMany(targetEntity="Group", cascade={"persist", "remove"})
+     * @ORM\JoinTable(name="users_groups",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
+     *      )
+     */
+    private $groups;
+
     public function __construct() {
         $this->friendsWithMe = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->myFriends = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->groups = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getMyFriends(){
         return $this->myFriends;
     }
 
-    public function addFriend(User $friend){
+    public function getMyGroups()
+    {
+        return $this->groups;
+    }
+
+    /**
+     * Add friend
+     * @param App\Entity\User $friend
+     */
+    public function addFriend(\App\Entity\User $friend){
         $this->myFriends->add($friend);
     }
 
     public function removeFriend(User $friend){
         $this->myFriends->removeElement($friend);
+    }
+
+    /**
+     * Add group
+     * @param App\Entity\Group $group
+     */
+    public function addGroup(\App\Entity\Group $group){
+        $this->groups->add($group);
+    }
+
+    public function removeGroup(Group $group){
+        $this->groups->removeElement($group);
     }
 
 
