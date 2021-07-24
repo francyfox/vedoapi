@@ -19,6 +19,35 @@ class UserJoin extends AbstractController
     private $list;
     private $data;
 
+
+    /**
+     * @Route("/api/users/{id}/friend/{friendId}", name="remove_friend", methods={"DELETE"})
+     */
+    public function removeFriend(int $id, int $groupId): Response {
+        $user = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->find($id);
+        $friend = $this->getDoctrine()
+            ->getRepository(Group::class)
+            ->find($groupId);
+        $user->removeFriend($friend);
+        return new Response('Friend removed - '.$friend->getName(), 200);
+    }
+
+    /**
+     * @Route("/api/users/{id}/group/{groupId}", name="remove_group", methods={"DELETE"})
+     */
+    public function removeGroup(int $id, int $groupId): Response {
+        $user = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->find($id);
+        $group = $this->getDoctrine()
+            ->getRepository(Group::class)
+            ->find($groupId);
+        $user->removeGroup($group);
+        return new Response('Group removed - '.$group->getGroupName(), 200);
+    }
+
     /**
          * @Route("/api/joinTo/{RoomType}", name="join", methods={"POST"})
      */

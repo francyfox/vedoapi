@@ -27,10 +27,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *             "summary"="Check JWT token"
  *          },
  *      },
+ *     "delete_user_friend"={
+ *         "method"="DELETE",
+ *         "path"="/user/group",
+ *         "controller"=UserJoin::class
+ *     },
+ *     "delete_user_group"={
+ *         "method"="DELETE",
+ *         "path"="/user/group",
+ *         "controller"=UserJoin::removeGroup
+ *     },
  *     "join_to_user"={
  *         "method"="POST",
  *         "path"="/joinTo/user",
- *         "controller"=UserJoin::class,
+ *         "controller"=UserJoin::joinToUser,
  *         "openapi_context"={
  *             "summary"="Add friend list // data(string username, array list)"
  *          },
@@ -38,7 +48,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "join_to_group"={
  *         "method"="POST",
  *         "path"="/joinTo/group",
- *         "controller"=UserJoin::class,
+ *         "controller"=UserJoin::joinToUser,
  *         "openapi_context"={
  *             "summary"="Add groups list // data(string username, array list)"
  *          },
