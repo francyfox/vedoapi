@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -28,27 +29,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          },
  *      },
  *     "delete_user_friend"={
- *         "method"="DELETE",
- *         "path"="/user/group",
+ *         "method"="POST",
+ *         "path"="/user/{id}/friend/{friendId}",
  *         "controller"=UserJoin::class
  *     },
  *     "delete_user_group"={
- *         "method"="DELETE",
- *         "path"="/user/group",
- *         "controller"=UserJoin::removeGroup
+ *         "method"="POST",
+ *         "path"="/user/{id}/group/{groupId}",
+ *         "controller"=UserJoin::class
  *     },
  *     "join_to_user"={
  *         "method"="POST",
  *         "path"="/joinTo/user",
- *         "controller"=UserJoin::joinToUser,
- *         "openapi_context"={
- *             "summary"="Add friend list // data(string username, array list)"
- *          },
+ *         "controller"=UserJoin::class
  *     },
  *     "join_to_group"={
  *         "method"="POST",
  *         "path"="/joinTo/group",
- *         "controller"=UserJoin::joinToUser,
+ *         "controller"=UserJoin::class,
  *         "openapi_context"={
  *             "summary"="Add groups list // data(string username, array list)"
  *          },
@@ -208,7 +206,7 @@ class User implements UserInterface
     /**
      * @Groups({"read", "write"})
      * Many Users have Many Groups.
-     * @ORM\ManyToMany(targetEntity="Group", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="Group", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinTable(name="users_groups",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
@@ -247,11 +245,16 @@ class User implements UserInterface
      * @param App\Entity\Group $group
      */
     public function addGroup(\App\Entity\Group $group){
-        $this->groups->add($group);
+        if (!$this->groups->contains($group)) {
+            $this->groups->add($group);
+        }
     }
 
-    public function removeGroup(Group $group){
-        $this->groups->removeElement($group);
+    public function removeGroup(\App\Entity\Group $group){
+        if (!$this->groups->contains($group)) {
+            return;
+        }
+        $this->groups = [];
     }
 
 

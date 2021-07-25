@@ -21,9 +21,9 @@ class UserJoin extends AbstractController
 
 
     /**
-     * @Route("/api/users/{id}/friend/{friendId}", name="remove_friend", methods={"DELETE"})
+     * @Route("/api/user/{id}/friend/{friendId}", name="remove_friend", methods={"POST"})
      */
-    public function removeFriend(int $id, int $groupId): Response {
+    public function removeFriend($id, $groupId): Response {
         $user = $this->getDoctrine()
             ->getRepository(User::class)
             ->find($id);
@@ -31,21 +31,23 @@ class UserJoin extends AbstractController
             ->getRepository(Group::class)
             ->find($groupId);
         $user->removeFriend($friend);
-        return new Response('Friend removed - '.$friend->getName(), 200);
+        return new Response('Friend removed - ', 400);
     }
 
     /**
-     * @Route("/api/users/{id}/group/{groupId}", name="remove_group", methods={"DELETE"})
+     * @Route("/api/user/{id}/group/{groupId}", name="remove_group", methods={"POST"})
      */
-    public function removeGroup(int $id, int $groupId): Response {
+    public function removeGroup($id, $groupId): Response {
         $user = $this->getDoctrine()
             ->getRepository(User::class)
             ->find($id);
+
         $group = $this->getDoctrine()
             ->getRepository(Group::class)
             ->find($groupId);
         $user->removeGroup($group);
-        return new Response('Group removed - '.$group->getGroupName(), 200);
+        $this->getDoctrine()->getManager()->refresh($user);
+        return new Response('Success', 201);
     }
 
     /**
