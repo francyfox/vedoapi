@@ -46,8 +46,8 @@ class UserJoin extends AbstractController
             ->getRepository(Group::class)
             ->find($groupId);
         $user->removeGroup($group);
-        $this->getDoctrine()->getManager()->refresh($user);
-        return new Response('Success', 201);
+        $this->em->flush();
+        return new Response('', 204);
     }
 
     /**

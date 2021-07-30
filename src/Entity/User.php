@@ -254,7 +254,7 @@ class User implements UserInterface
         if (!$this->groups->contains($group)) {
             return;
         }
-        $this->groups = [];
+        $this->groups->removeElement($group);
     }
 
 
